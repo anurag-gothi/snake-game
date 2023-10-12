@@ -21,7 +21,6 @@ const SnakeGame = () => {
   const [direction, setDirection] = useState('RIGHT');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
-  const [gameType, setGameType] = useState('slug');
   const [started, setStarted] = useState(false);
   const [speed, setSpeed] = useState(defaultSpeed);
   const [isPaused, setIsPaused] = useState(false);
@@ -148,7 +147,7 @@ const SnakeGame = () => {
     return () => {
       clearInterval(gameInterval);
     };
-  }, [snake, speed, isPaused, started]);
+  }, [snake, speed, isPaused, started, checkCollision]);
   // snake, speed, isPaused
   const togglePause = () => {
     if (!started) {
@@ -185,7 +184,7 @@ const SnakeGame = () => {
                   </div>
                 ) : (
                   <div className="home-page">
-                    <img src={snakeIcon} className="snake-icon" />
+                    <img src={snakeIcon} className="snake-icon" alt="snake-icon"/>
                     <div className="buttons">
                       <button className="play-button" onClick={onStart}>
                         [PLAY]
