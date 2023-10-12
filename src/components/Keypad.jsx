@@ -2,7 +2,7 @@ import React from 'react'
 import playButton from '../assets/play-buttton.png'
 import pauseButton from '../assets/pause.png'
 
-function Keypad({togglePause,isPaused}) {
+function Keypad({togglePause,isPaused, started}) {
   return (
     <div className='keypad'> 
     <div class="flex mt-10">
@@ -11,7 +11,7 @@ function Keypad({togglePause,isPaused}) {
     </div>
     <div class="btn menu-btn">
       <div class="inner-btn">
-        <img src={isPaused? playButton : pauseButton }
+        <img src={isPaused || !started? playButton : pauseButton }
         onClick={togglePause}
         alt="play/pause" className='play-pause'/>
       </div>

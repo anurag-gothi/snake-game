@@ -3,9 +3,10 @@ import Snake from '../components/Snake';
 import Food from '../components/Food';
 import Keypad from '../components/Keypad';
 import constants from '../utils/constants';
+import snakeIcon from '../assets/snake.png';
 
 const SnakeGame = () => {
-  const {gridSize,defaultSpeed,onLevelUp} = constants;
+  const { gridSize, defaultSpeed, onLevelUp } = constants;
   const generateFoodPosition = () => {
     const x = Math.floor(Math.random() * gridSize);
     const y = Math.floor(Math.random() * gridSize);
@@ -20,6 +21,8 @@ const SnakeGame = () => {
   const [direction, setDirection] = useState('RIGHT');
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
+  const [gameType, setGameType] = useState('slug');
+  const [started, setStarted] = useState(false);
   const [speed, setSpeed] = useState(defaultSpeed);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -43,7 +46,7 @@ const SnakeGame = () => {
     }
 
     // Check if the snake eats the food
-    if (head.x === food.x&& head.y === food.y) {
+    if (head.x === food.x && head.y === food.y) {
       setFood(generateFoodPosition());
       setScore(score + 1);
 
@@ -122,19 +125,19 @@ const SnakeGame = () => {
   }, [direction]);
 
   useEffect(() => {
-    if (score % 5 === 0 && score>0 ) {
-      setSpeed((prevSpeed)=>{
-        return prevSpeed - onLevelUp
+    if (score % 5 === 0 && score > 0) {
+      setSpeed((prevSpeed) => {
+        return prevSpeed - onLevelUp;
       });
-      setLevel((prevLevel)=>{
-        return prevLevel+1
+      setLevel((prevLevel) => {
+        return prevLevel + 1;
       });
     }
   }, [score]);
 
   useEffect(() => {
     const handleGameTick = () => {
-      if (!isPaused) {
+      if (!isPaused && started) {
         moveSnake();
         checkCollision();
       }
@@ -145,10 +148,18 @@ const SnakeGame = () => {
     return () => {
       clearInterval(gameInterval);
     };
-  }, [snake, speed, isPaused]);
+  }, [snake, speed, isPaused, started]);
   // snake, speed, isPaused
   const togglePause = () => {
+    if (!started) {
+      setStarted(true);
+      return;
+    }
     setIsPaused(!isPaused);
+  };
+
+  const onStart = () => {
+    setStarted(true);
   };
 
   return (
@@ -161,19 +172,33 @@ const SnakeGame = () => {
               <div class="line-rec"></div>
               <p class="text-center white-text">NOKIA</p>
               <div class="flex-screen">
-                <div className='game-header'>
-                <span className='score'>{score}</span>
-                <span className='level'>Level: {level}</span>
-                </div>
-                <div className='game-container'>
-                  <Snake snake={snake} gridSize={gridSize} />
-                  <Food food={food} gridSize={gridSize} />
-                </div>
+                {started ? (
+                  <div className="game-view">
+                    <div className="game-header">
+                      <span className="score">{score}</span>
+                      <span className="level">Level: {level}</span>
+                    </div>
+                    <div className="game-container">
+                      <Snake snake={snake} gridSize={gridSize} />
+                      <Food food={food} gridSize={gridSize} />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="home-page">
+                    <img src={snakeIcon} className="snake-icon" />
+                    <div className="buttons">
+                      <button className="play-button" onClick={onStart}>
+                        [PLAY]
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             <Keypad
-            togglePause={togglePause}
-            isPaused={isPaused}
+              togglePause={togglePause}
+              isPaused={isPaused}
+              started={started}
             />
             <div class="last-dot"></div>
           </div>
